@@ -1,0 +1,7 @@
+APP #
+LAM
+IND $
+JMP #
+CONS $
+PICK $
+TUP

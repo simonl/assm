@@ -1,0 +1,6 @@
+
+// after
+
+variable	>> (add "PUSH " @ "\n")
+call		>> (add (map uns $1))
+

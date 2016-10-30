@@ -1,0 +1,2 @@
+sudo ./compile2 $1 > Compiler.log
+sudo ./test $1

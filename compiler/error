@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "lambda.py", line 186, in <module>
+    result = compile(source)
+  File "lambda.py", line 30, in compile
+    tree 		= parser.parse		(   tokens  )
+  File "/home/simon/assm/compiler/parser.py", line 6, in parse
+    parseTree = definitions["program"](tokens)
+  File "/home/simon/assm/compiler/parser.py", line 152, in parse
+    return definitions[name](tokens)
+  File "/home/simon/assm/compiler/parser.py", line 70, in parse
+    result = parser(tokens)
+  File "/home/simon/assm/compiler/parser.py", line 84, in parse
+    return (tokens[0], tokens[1:]) if tokens[0][0] == const else None
+IndexError: list index out of range

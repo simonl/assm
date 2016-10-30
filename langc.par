@@ -1,0 +1,13 @@
+program := <E>
+
+E := <tOp> | <T>
+tOp = <T> <addop> <E>
+
+T := <fOp> | <F>
+fOp = <F> <mulop> <T>
+
+F := number | <inparen>
+inparen = !openparen <E> !closeparen
+
+addop := plus | minus
+mulop := times | divide

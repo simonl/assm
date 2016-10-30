@@ -1,0 +1,35 @@
+function maps ( f , p ) {
+	return call __cons__ ( call f ( call __car__ ( p ) ) , call f ( call __cdr__ ( p ) ) ) ;
+}
+
+function square ( x ) {
+	return call __mul__ ( x , x ) ;
+}
+
+function fact ( x ) {
+	if ( x ) {
+		return call __mul__ ( x , call fact ( call __pred__ ( x ) ) ) ;
+	} else {
+		return 1 ;
+	}
+}
+
+function factExpr ( x ) {
+	return if ( x ) {
+		call __mul__ ( x , call factExpr ( call __pred__ ( x ) ) )
+	} else { 1 } ;
+}
+
+function main ( argv ) {
+
+	vars x ;
+
+	for x in call __range__ ( 15 ) {
+		call __pdec__ ( call factExpr ( x ) ) ;
+		call __ln__ ( ) ;
+	}
+
+	return call __leq__ ( 3 , 2 ) ;
+}
+
+

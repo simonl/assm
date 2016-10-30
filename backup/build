@@ -1,0 +1,5 @@
+sudo as -gstabs -32 -o "$1".o "$1".s 
+sudo ld -melf_i386 -o $1 "$1".o
+sudo ./$@
+sudo echo $?
+

@@ -1,0 +1,41 @@
+program		:= <map>*
+
+map		:= <rule> | <continue> | <action> | <definition> | <defun>
+rule		= name name* !"->" <value> 
+action		= name name* !">>" <value>
+continue	= !">>" name
+definition	= !"def" name !":" <value>
+defun		= !"def" !"(" name name* !")" !":" <value>
+
+
+value		:= <control> | <constructor> | <call> | <select> | <unsugar> | <function> | string | name | all | argument | number
+
+control		:= <conditional> | <sequence> | <assignment>
+conditional	= !"if" <value> !"then" <value> !"else" <value>
+sequence	= !"(" !"do" <value>+ !")"
+assignment	= name !"=" <value>
+
+constructor	:= <node> | <leaf> | <list>
+node		= !"{" name !":" <value>* !"}"
+leaf		= !"(" name !":" <value>* !")" | !"<" name !":" <value>* !">"
+list		= !"[" <value>* !"]"
+
+function	= !"(" !"\" name* !":" <value> !")"
+call		= !"(" name <value>* !")"
+select		= !"[" <value> !":" <selector> !"]"
+
+selector	:= <range> | <item>
+item		= number
+range		= number !"to" number
+
+unsugar		= !"*" <value>
+
+
+// rule	= <pattern> !"->" <construct>
+
+// pattern := variable | <compound>
+// compound = !"{" variable <pattern>* !"}"
+
+// construct := variable | <call> | <tree>
+// call = !"(" variable <construct>* !")"
+// tree = !"{" variable <construct>* !"}"

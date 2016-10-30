@@ -1,0 +1,4 @@
+inparen	-> $0
+
+>> fOp
+>> tOp

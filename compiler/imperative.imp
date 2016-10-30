@@ -1,0 +1,25 @@
+main:
+	one <- 1
+	max <- 10
+	push one
+	call dup
+	exit one
+
+dup:
+	pop local
+	push local
+	push local
+	return local
+
+sum:
+	i <- 0
+	sum <- 0
+
+while:	pred <- i = max
+	if pred end
+
+	sum <- sum + i
+	i <- i + one
+	goto while
+
+end:	return sum

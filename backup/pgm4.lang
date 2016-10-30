@@ -1,0 +1,54 @@
+// main() :
+//	acc := 0
+//	for x in range(10) :
+//		acc += x
+//	return acc
+
+FUNCTION main
+
+LABEL main
+ACTIVATE 2
+VARIABLE acc
+VARIABLE x
+SECTION _enditer0
+
+// acc = 0
+ADDRESS acc
+PUSH
+NUMBER 0
+PUSH
+ADDRESS __asg__
+CALL 2
+
+// for x in range(11)
+NUMBER 11
+PUSH
+ADDRESS __range__
+ITERATE x
+
+// 	acc += x
+ADDRESS acc
+PUSH
+IDENTIFIER acc
+PUSH
+IDENTIFIER x
+PUSH
+ADDRESS __add__
+CALL 2
+PUSH
+ADDRESS __asg__
+CALL 2
+
+CALLBACK 1
+
+// return acc
+IDENTIFIER acc
+RETURN
+
+
+
+
+// PUSH, CALL, RETN, PARA, ACTV, LABL, FUNC, ADDR, IDEN, LTRL, VRBL
+//ARRAYNUM 0, 1, 2, ...
+//ARRAYCHAR 'a', 'b', ...
+//__mkstr__

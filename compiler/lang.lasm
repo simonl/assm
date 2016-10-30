@@ -1,0 +1,47 @@
+.code
+
+APP	#code
+LAM
+IND	$
+APPI	$
+APPC	#code
+FOR
+CASE	#heap
+
+.heap
+
+THU	#code $0
+CLO	#code $0
+VOID
+
+.stack
+
+UPD	#heap
+ARG	#heap
+CON	#heap
+
+.static
+
+TAB #code
+
+%% program	= []
+%% stack	= ()
+%% heap		= []
+%% environment	= ::
+
+%% ip		= *program
+%% env		= environment
+%% 
+
+%% APP a ( -- *i ) [ -- THUNK a #env ]
+%%
+
+%% .code
+%% APP #code {
+%%	length = len(heap)
+%%	heap.extend( (heap!THUNK, code[pc], env)
+%%	pc += 1
+%% 	stack.append( length )
+%% 	stack.append( stack!ARG )
+%% }
+

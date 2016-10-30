@@ -1,0 +1,232 @@
+#!/usr/bin/python3
+
+import lexer
+import parser
+import unsugarer
+import translator
+
+import copy
+
+level = 0
+
+test = ("caseexp", [("cons", 0), [("lambda", [("index", "0")])] ])
+# data Exp = Ind Int | Lam Exp | App Exp Exp | Case Exp [Int] | Cons Int | Tup [Int]
+test2 = ("apply", [, ("apply", [ ("lambda", [] ), (" ] ) ] )
+
+def optimize(tree) :
+	if level > 0:
+#		tree = reduce(tree)
+		print(reduce(test))
+	return tree
+
+
+def cons(*xxs) :
+	return xxs
+
+def get(n, xs) :
+	for n in range(n) :
+		xs = xs[1]
+	return xs[0]
+
+# \E | (f x) | N
+# 4 instruction machine : code + env + cont | heap
+#	(f a)	env	cont		heap
+#	f	env	(a,env):cont	heap
+
+#	\E	env	(a,e):cont	heap
+#	\E	env	*:cont		heap++(a,e)
+#	E	*:env	cont		heap
+
+#	\E	env	#:cont		heap
+#	\E	env	cont		heap[#]=(\E,env)
+
+#	N	[..N:*]	  cont		heap
+#	*	_	  cont		heap
+#	heap[*]	heap[**]  #:cont	heap
+
+# ... | {t} | (t,vs)
+# + Data Constructors (really just tuples)
+#	case e of alt*	[]	cont			heap
+#	e		[]	(alt*, []):cont		heap
+
+#	{t}		[vs]	cont			heap
+#	(t,vs)		_	cont			heap
+
+#	(,)		[vs]	cont			heap 	-- Not now...
+#	(vs)		_	cont			heap
+
+#	(t,vs)		_	(alt*, []):cont		heap
+#	alt		[]	(t,vs):cont		heap
+
+#	(t,vs)		_	#:cont			heap
+#	(t,vs)		_	cont			heap[#]=(t,vs)
+
+# N	(0,  n)
+# \E 	(1, exp)
+# (f a)	(2, f, a)
+# (e[])	(3, e, [])
+
+def reduce(current, env=(), cont=[], heap=[]) :
+	num = 0
+	while True :
+		print("Step " + str(num), current, env, cont, heap, "\n",sep="\n")
+		num += 1
+
+		(type, parts) = current
+		if type == "apply" :
+			current = parts[0]
+			cont.append( ("closure", (parts[1], env)) )
+		elif type == "lambda" :
+			if not cont :
+				return current
+
+			(cct, ccp) = cont.pop()
+			if cct == "update" :
+				heap[ccp] = (current, env)
+			elif cct == "closure" :
+				if ccp[0][0] == "index" :
+					pos = get( int(ccp[0][1]), ccp[1])
+				else :
+					pos = len(heap)
+					heap.append( ccp )
+				current, env = parts[0], cons(pos, env)
+			else :
+				raise Exception("Illegal Continuation!", cont)
+		elif type == "index" :
+			loc = get( int(parts), env)
+			(current, env) = heap[loc]
+			if current[0] != "lambda" and current[0] != "tuple":
+				cont.append( ("update", loc) )
+		elif type == "cons" :
+			current, env = ("tuple", [parts] + toTuple(env)), ()
+		elif type == "tuple" :
+			if not cont :
+				return current
+
+			(cct, ccp) = cont.pop()
+			if cct == "update" :
+				heap[ccp] = (current, env)
+			elif cct == "cases" :
+				cont.append(("closure", [current, env]))
+				current, env = choose(parts[0], ccp[0]), ccp[1]
+			else :
+				raise Exception("Invalid use of Tuples!", current, (cct,ccp))
+		elif type == "caseexp" :
+			current = parts[0]
+			cont.append(("cases", [parts[1], env]) )
+		else :
+			raise Exception("Illegal Expression!", current, env)
+
+
+def choose(n, alts) :
+	return alts[n]
+
+def toTuple(ls) :
+	if ls :
+		return [ls[0]] + toTuple(*ls[1])
+	return []
+
+
+def reduceS(current, env=(), cont=[], heap=[]) :
+	while True :
+		(type, parts) = current
+		if type == "apply" :
+			current = parts[0]
+			cont.append( ("closure", (parts[1], env)) )
+		elif type == "lambda" :
+			if not cont :
+				return current
+
+			(cct, ccp) = cont.pop()
+			if cct == "update" :
+				heap[ccp] = (current, env)
+			elif cct == "closure" :
+				current, env = parts[0], cons(len(heap), env)
+				heap.append( ccp )
+			else :
+				raise Exception("Illegal Continuation!", cont)
+		elif type == "index" :
+			loc = get( int(parts), env)
+			(current, env) = heap[loc]
+			cont.append( ("update", loc) )
+		else :
+			raise Exception("Illegal Expression!", current, env)
+
+current = None
+env = ()
+cont = []
+heap = []
+
+def stateInit(input) :
+	global current
+	current = input
+	while True :
+		(type, parts) = current
+		if type == "index" :
+			stateIndex(parts)
+		elif type == "apply" :
+			stateApply(*parts)
+		elif type == "lambda" :
+			stateLambda(parts)
+		elif type == "done" :
+			return parts
+
+def stateIndex(index) :
+	global current, env, cont, heap
+	loc = get( index, env )
+	(type, (current, env)) = heap[loc]
+	if type == "thunk" :
+		cont.append( ("update", loc) )
+
+def statePointer(index) :
+	global current, env, cont, heap
+	(type, (current, env)) = heap[index]
+
+def stateApply(f, x) :
+	global current, env, cont
+	current = f
+	if x[0] == "index" :
+		cont.append( ("pointer", get(x[0],env)) )
+	elif x[0] == "lambda" :
+		cont.append( ("pointer", len(heap)) )
+		heap.append( ("closure", [x, env])  )
+	elif x[0] == "apply" :
+		cont.append( ("pointer", len(heap)) )
+		heap.append( ("thunk", [x, env])    )
+
+def stateLambda(parts) :
+	global current, env, cont, heap
+	if not cont :
+		current = ("done", [current, env, heap])
+	(cctype, ccparts) = cont.pop()
+	if cctype == "update" :
+		stateLUpdate(ccparts)
+	elif cctype == "pointer" :
+		stateLPointer(parts[0], ccparts)
+
+def stateLUpdate(index) :
+	global current, env, heap
+	heap[index] = ("closure", (current, env))
+
+def stateLPointer(sub, index) :
+	global current, env
+	current, env = sub, cons(index, env)
+
+
+
+
+
+globals = {}
+
+def load(filename) :
+	global globals
+#	with open(filename, "r") as file :
+#		globals = {name:tree for name, tree in [ processline(line) for line in file if line.strip() ] }
+#		globals = {name:optimize(tree) for name, tree in globals.items()}
+
+def processline(line) :
+	name = line.split()[0]
+	translator.globals.append(name)
+
+	code = " ".join(line.split()[2:])
+	return (name, unsugarer.unsugar(parser.parse(lexer.lex(code))))

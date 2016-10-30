@@ -1,0 +1,124 @@
+// Definitions
+def yComb : ( variable : "yComb" )
+def (mkRec v e) : { apply : yComb { lambda : v e } }
+
+
+def (var str) : ( variable : str )
+
+def (fst xs) : (car xs)
+def (snd xs) : (car (cdr xs))
+def (last xs) : [xs : -1]
+
+def (fsts xs) : (map fst xs)
+def (snds xs) : (map snd xs)
+
+def (mkLam v e) : { lambda : v e }
+def (mkApp f x) : { apply : f x }
+
+
+
+// DeBruijn transform 
+def vars : []
+//lambda v e	>> 	(do 	vars = (insert (snd v) vars) 
+//				( lambda : *e ))
+apply f x	>>	( apply : *f *x )
+variable	>>	( index : (index ... vars) )
+force k		>>	( force : *k )
+
+lambda p e	>>	if	(eq (type p) "strict")
+			then	*{ lambda : (branch 0 p) { force : e } }
+			else	(do	vars = (insert (snd p) vars)
+					( lambda : *e ))
+
+// (e) -> e
+inparen e -> e
+
+
+// Lams [x,y,z] e -> Lam x (Lam y (Lam z e)))
+abstraction vs e -> (foldr mkLam e vs)
+
+
+// Apps f [x,y,z] -> App (App (App f x) y) z
+application f xs -> (foldl mkApp f xs)
+
+
+
+// x y z = e	-> \x y z. e
+assignment -> < abstraction : ... >
+
+// rec v e 	-> Y \v.e
+recursive e	-> (mkRec (var "this") e)
+
+def (mkBindings vs es in) : { application : 
+				{ abstraction : 
+					vs 
+					in } 
+				es }
+
+// let v1 = e1 [; v2 = e2 ...] in n -> (\v v2 ... .n) e1 e2 ...
+letexp first ands in -> (do	defs = (map (\x:*x) (insert first ands))
+			   	(mkBindings 
+					(fsts defs) 
+					(snds defs) 
+					in))
+
+// ; def	-> def
+andexp e	>> *e
+
+// rec f assg	-> (f, Y \f.assg)
+recdef v e	>> [ v (mkRec v e) ]
+
+// f assg	-> (f, assg)
+simpledef v e	>> [ v e ]
+
+
+extract v e r	-> { apply :
+			{ apply : 
+				(var bind)
+				e }
+			{ lambda :
+				v r } }
+
+
+
+// NO!??!
+
+
+// def (contifycase var) : (\ exp : { lambda : var exp })
+// caseexpression (c.., [exp, var, cases]) -> { caseint : exp (map (contify var) cs) }
+
+caseexpression	-> { caseint : $0 $1 [] $2 }
+caseint		-> if $3 then 
+			{ caseint : $0 $1 
+				(append *{ lambda : $1 [$3 : 0] } $2)
+				[$3 : 1 to 0] }
+		   else { caseexp : *$0 $2 }
+
+// CPS conversion
+lambdaCPS	-> { lambda : 
+			< variable : "*k" > 
+			{ apply : 
+				< variable : "*k" >
+				{ lambda : $0 *$1 } } }
+
+variableCPS	-> { lambda :
+			< variable : "*k" >
+			{ apply :
+				< variable : "*k" >
+				< variable : @ > } }
+
+applyCPS	-> { lambda :
+			< variable : "*k" >
+			{ apply :
+				*$0
+				{ lambda : 
+					< variable : "*f" >
+					{ apply :
+						*$1
+						{ lambda :
+							< variable : "*x" >
+							*{ multiapply :
+								< variable : "*f" >
+								[ < variable : "*x" >
+								  < variable : "*k" > ] } } } } }
+

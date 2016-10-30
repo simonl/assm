@@ -1,0 +1,30 @@
+	 NUMBER
+	 44
+	 OPERATOR
+	 ==
+	 NUMBER
+	 33
+	 OPERATOR
+	 **
+	 NUMBER
+	 2
+	 OPERATOR
+	 +
+	 IDENTIFIER
+	 __add__
+	 OPEN_PAREN
+	 (
+	 NUMBER
+	 4
+	 OPERATOR
+	 -
+	 NUMBER
+	 2
+	 COMMA
+	 ,
+	 NUMBER
+	 5
+	 CLOSE_PAREN
+	 )
+{}
+__mul__ - __add__ 	 __sub__(__mul__,__add__)

@@ -1,0 +1,10 @@
+program		:= <statement>
+
+statement	:= <block> | <assignment>
+
+block		= !"{" <statement>* !"}"
+assignment	= variable !"=" <expression> !";"
+
+expression	:= <functioncall> | <functiondef> | variable
+functioncall	= <expression> !"(" <expression>* !")"
+functiondef	= !"(" variable* !")" <block>

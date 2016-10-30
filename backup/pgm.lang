@@ -1,0 +1,71 @@
+main()
+call _print("Start!\n")
+temp = call func(2, 2)
+b = func
+return temp && call b(1 + 2, call other(3))
+
+main2()
+call _printChar(call _inputChar())
+call _repeat()
+return
+
+
+func(a, b)
+return a == call other(b)
+
+other(f)
+call _print("hello\n")
+return f
+
+
+
+
+
+#this is not valid
+
+#main = (args...){ 
+#	i = 0;
+#	while i < 10 : {
+#		print(i);
+#		i++;
+#	};
+#
+#	while False print(i);
+#		
+#	//x, ret = args.iter();
+#	//while ret : 
+#	for x in args : {
+#		a = x*x;
+#		print(a);
+#		//x, ret = args.next(); 
+#	};
+#
+#	{ a = "hello"; };
+#	add = O(log(n))
+#	mul = O(log(n)**3)
+#	a * b == (a + c) * (b - 1) == a*b + c*b - a - c
+#	c == -a*b / b-1
+#}
+# 
+#list = 1 :: < map( (x){ x+1 }, list ) >;
+#map = (func, list){ 
+#		if list : {
+#			for element in list : {
+#				return func(element) -> < map(func, list.next) >;
+#			}
+#		} else : {
+#			return NULL;
+#		}
+#	}
+#compose=(f,g){return (x){return f(g(x))); }; };
+#compose = (f, g){ 
+#	return (x){ 
+#		return f(g(x)); 
+#	}; 
+#};
+
+# compose = (f,g){ (x){ f(g(x)) } };
+
+# square = (x){ x*x };
+# foo = square
+# foo(4)

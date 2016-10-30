@@ -1,0 +1,24 @@
+add = (\Int::x Int::y.(x+y))
+sub = (\Int::x Int::y.(x-y))
+mul = (\Int::x Int::y.(x*y))
+div = (\Int::x Int::y.(x/y))
+mod = (\Int::x Int::y.(x%y))
+square = (\Int::x.(x*x))
+
+compose = (\(b->c)::f (a->b)::g a::x.(f (g x)))
+
+truel = (\b::x b::y.x))
+falsel = (\b::x b::y.y))
+cond = (\Bool:p a::t a::e. (p t e) )
+
+cons = (\a b p.(p a b)) ((\a::a b::b (a->(b->c))::p.(p a b)) 4 5))
+
+car = (\Pair::p.(p truel))
+cdr = (\Pair::p.(p falsel))
+
+ycomb = (\(a->b)::h.( (\c::x.(h (x x))) (\x.(h (x x))) ))
+
+data List a = Nil | Cons a (List a)
+Nil = (\/ a . (List a))
+Cons = (\/ a . (\a::x (List a)::xs. 
+

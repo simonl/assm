@@ -1,0 +1,79 @@
+
+def analyze(tree) :
+	result = check(*tree)
+	if not result :
+		raise Exception("Invalid Type!")
+	else :
+		return result
+
+
+types = []
+def check(type, parts) :
+	if type == "lambda" :
+		return ("funtype", [check(*parts[0]), check(*parts[1])])
+	elif type == "apply" :
+		return checkApply(parts[0], parts[1])
+	elif type == "declaration" :
+		return checkDecl(parts[0], parts[1])
+	elif type == "number" :
+		return ("type", "Int")
+	elif type == "character" :
+		return ("type", "Char")
+	elif type == "string" :
+		return ("type", "List Char")
+	
+	return lookup(parts)
+
+#Boolean = True 
+#	 | False
+
+def checkApply(func, arg) :
+	ftype = check(*func)
+	atype = check(*arg)
+
+	if ftype[0] != "funtype" :
+		raise Exception("Should be funtype!", func, "::", ftype)
+	elif ftype[1][0] != atype :
+		if ftype[1][0][0] != "variable":
+			raise Exception("Incompatible types!", ftype[1][0], "!=", atype)
+		ftype[1][1] = replace(ftype[0][0], atype, *ftype[1][1])	
+
+	return ftype[1][1]
+
+def checkDecl(type, var) :
+	global types
+	types = [(var, type)] + types
+	return type
+
+def lookup(name) :
+	for var, type in types :
+		if var[1] == name :
+			return type
+	raise Exception("Variable not found!", name)
+
+def replace(fro, to, type, parts) :
+	if type == "funtype" :
+		return (type, [replace(fro, to, part) for part in parts])
+	if  
+
+def tostr(type) :
+	(type, parts) = type
+	if type in ("type", "variable") :
+		return parts
+	return "(" + tostr(parts[0]) + ("->" if type == "funtype" else " ") + tostr(parts[1]) + ")"
+
+
+import lexer
+import parser
+import unsugarer
+import copy
+
+if __name__ == "__main__" :
+	unsugarer.load("lang.uns")
+	lexer.load("lang.lex")
+	parser.load("lang.par")
+
+	print( tostr(analyze( unsugarer.unsugar(parser.parse(lexer.lex(
+		r'((\a::x.(\Char::y.x)) 4)'
+	))))))
+

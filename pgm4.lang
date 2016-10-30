@@ -1,0 +1,118 @@
+// main() :
+//	acc := 0
+//	for x in range(10) :
+//		acc += x
+//	return acc
+
+FUNCTION main
+
+LABEL main
+ACTIVATE 2
+VARIABLE acc
+VARIABLE x
+SECTION _enditer0
+
+// acc = 0
+ADDRESS acc
+PUSH
+NUMBER 0
+PUSH
+ADDRESS __asg__
+CALL 2
+
+// for x in range(11)
+NUMBER 11
+PUSH
+ADDRESS __range__
+ITERATE x
+
+// 	acc += x
+ADDRESS acc
+PUSH
+IDENTIFIER acc
+PUSH
+IDENTIFIER x
+PUSH
+ADDRESS __add__
+CALL 2
+PUSH
+ADDRESS __asg__
+CALL 2
+
+CALLBACK 1
+
+// return acc
+IDENTIFIER acc
+RETURN
+
+
+
+
+// PUSH, CALL, RETN, PARA, ACTV, LABL, FUNC, ADDR, IDEN, LTRL, VRBL
+//ARRAYNUM 0, 1, 2, ...
+//ARRAYCHAR 'a', 'b', ...
+//__mkstr__
+
+// JUMP, JUMP_TRUE, JUMP_FALSE
+// ADD
+
+//WHILE b { a }
+// start_while:, push <b>, push end_while, call jumpFalse, <a>, jump start_while, end_while:
+
+//UNTIL b { a }
+// start_until:, push <b>, push end_until, call jumpTrue, <a>, jump start_until, end_until: 
+
+// do { a } while b
+// start_dowhile:, <a>, push <b>, push start_dowhile, call jumpTrue
+
+// do { a } until b
+// start_dountil:, <a>, push <b>, push start_dountil, call jumpFalse
+
+// if b { a } [else { c }]
+// start_if:, push <b>, push else_clause, call jumpFalse, <a>, [ jump end_if, ] else_clause:, [<c>, end_if: ]
+
+// unless b { a } 
+// start_unless:, push <b>, push end_unless, call jumpTrue, <a>, end_unless:
+// <b>, cmp False, %eax, je end_unless
+
+
+// <b>
+// UNLESS
+// 	<a>
+// end_unlessX:
+
+// if(b){a}
+// <b>
+// IF
+//	<a>
+// jmp end_ifX
+// else_clauseX:
+//	<c>
+// end_ifX:
+
+
+// for x in iter { b }
+//
+// call iter
+// 
+
+// exp for var in iter while whCond if ifCond
+// for var in iter :
+//	unless whCond :
+//		break
+//	 ifCond :
+//		yield exp
+
+// exp for var in iter until unCond if ifCond
+//
+//	if unCond :
+//		break
+//	if ifCond :
+//		yield expr
+
+// exp for var in iter until unCond unless unlCond
+//
+//	if unCond :
+//		break
+//	unless unlCond :
+//		yield expr 

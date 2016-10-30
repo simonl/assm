@@ -1,0 +1,52 @@
+__mul__ - __add__
+
+/*
+
+str = "abc"
+str = __str__('a', 'b', 'c')
+
+main() :
+	return 3 + 4
+
+func(a, b) :
+	return 3 - 3
+
+ID main
+ID func
+
+ACT, LIT, RTRN, CALL, PUSH, ID, ADDR, PARAM
+8
+
+main:
+ACT 0
+PREPCALL
+LIT 3
+PUSH
+LIT 4
+PUSH
+ID __add__
+CALL
+RETURN
+
+func:
+ACT 2
+PARAM a
+PARAM b
+PREPCALL
+LIT 3
+PUSH
+LIT 3
+PUSH
+ID __sub__
+CALL
+RETURN
+
+a = 4
+
+ADDR a
+PUSH
+LIT 4
+PUSH
+ID __asg__
+CALL
+

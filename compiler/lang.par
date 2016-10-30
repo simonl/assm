@@ -1,0 +1,73 @@
+program 	:= <expression>
+
+// Start
+expression	:= <application>
+application	= <unit> <unit>*
+abstraction	= !"\" <pattern>+ !"." <expression>
+
+unit		:= <sugar> | variable | <abstraction>
+
+pattern		:= variable | <strict>
+strict		= !"!" variable
+
+
+// Syntactic Sugar Ahead!
+
+sugar		:= <inparen> | <letexp>
+inparen		= !"(" <expression> !")"
+letexp		= !"let" <definition> <andexp>* !"in" <expression>
+andexp		= !";" <definition>
+
+definition	:= <recdef> | <simpledef>
+recdef		= !"rec" variable <assignment>
+simpledef	= <pattern> <assignment>
+
+assignment	= <pattern>* !"=" <expression>
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Lazy + Continuations (Uh oh...)
+// expression	:= variable | unit | <abstraction> | <application>
+// abstraction	:= <lambda> | <continuation> | <thunk>
+// application	:= <apply>  | <return>	     | <force>
+// simple	:= variable | <lambda> | <thunk>
+// cont		:= variable | <continuation>
+//
+// lambda	= !"(" !"\" variable variable !"." <expression> !")"
+// continuation	= !"(" variable !"." <expression> !")"
+// thunk	= !"(" !"\" !"()"     variable !"." <expression> !")"
+//
+// apply	= !"(" <simple> <simple> <cont> !")"
+// return	= !"(" <cont> <simple> !")"
+// force	= !"(" <simple> !"()" <cont> !")"
+
+
+
+// Types & Constructors (Maybe)
+
+//annotation	= <vexp> !"::" <texp>
+//texp		:= index | type | <forall> | <cons>
+//forall		= !"\/" <texp>
+//cons		= !"(" <texp> <texp> !")"
+
+// Case expressions are then essential!
+//caseexp = !"case" <expression> !"of" <case>*
+//case    = value !"->" <cont>
+
+
+
+// Kinds (...)
+//
+//kexp		:= star | <higher>
+//higher	= !"(" <kexp> <kexp> !")"
+

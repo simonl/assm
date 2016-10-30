@@ -1,0 +1,47 @@
+// The essential Y combinator
+let 
+	yComb f = let s x = f (x x) in
+			s s in
+let
+	k x y = x ;
+	s f g x = f x (g x) ;
+	id x = x ;
+	apply f x = f x ;
+	compose f g x = f (g x) ;
+	rec undefined = undefined in
+let
+	// data Maybe a = Nothing | Just a
+	
+	nothing = \cNothing cJust. cNothing ;
+	just x = \cNothing cJust. cJust x ;
+	caseNothing = id ;
+	caseJust = id ;
+	
+	// data List a = Nil | Cons a (List a)
+	nil = \cNil cCons. cNil ;
+	cons x xs = \cNil cCons. cCons x xs ;
+	caseNil = id ;
+	caseCons = id ;
+
+	caseOf = id in
+let
+	// class Monad m where 
+	//	return :: a -> M a 
+	//	bind :: M a -> (a -> M b) -> M b
+	
+	dictMonad return bind = \selector. selector return bind ;
+	return dict = dict (\return bind. return) ;
+	bind dict = (\return bind. bind) ;
+let
+	// instance Monad Maybe where
+	//	return = just ;
+	//	bind Nothing f = Nothing
+	//	bind (Just x) f = f x
+	
+	monadMaybe = (let 
+			returnMaybe = just ;
+			bindMaybe x f = caseOf x
+					(caseNothing nothing)
+					(caseJust (\x. f x))	in
+			dictMonad returnMaybe bindMaybe)	in
+bind monadMaybe nothing undefined

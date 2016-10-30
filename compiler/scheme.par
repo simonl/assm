@@ -1,0 +1,10 @@
+program		:= <expression>
+
+expression	:= <specialform> | <call> | variable
+
+specialform	:= <lambda> | <if> | <quote>
+lambda		= !"(" !"lambda" !"(" variable* !")" <expression> !")"
+if		= !"(" !"if" <expression> <expression> <expression> !")"
+quote		= !"(" !"quote" <expression> !")"
+
+call		= !"(" <expression> <expression>* !")"
