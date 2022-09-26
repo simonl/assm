@@ -1,1 +1,2 @@
-"Compiler Compiler" written in Python for a simple imperative language, generates x86 assembly language.
+"Compiler Compiler" written in Python for a few structured languages, generates x86 assembly language.
+Syntax parsing rules are read from "/compiler/*.lex" and "/compiler/*.par" files.
