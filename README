@@ -3,3 +3,16 @@ Learning x86 assembly language by writing a compiler. (10/2010)
 
 "Compiler Compiler" written in Python for a few structured languages, generates x86 assembly language.
 Syntax parsing rules are read from "/compiler/*.lex" and "/compiler/*.par" files.
+
+Example:
+
+program		:= <statement>
+
+statement	:= <block> | <assignment>
+
+block		= !"{" <statement>* !"}"
+assignment	= variable !"=" <expression> !";"
+
+expression	:= <functioncall> | <functiondef> | variable
+functioncall	= <expression> !"(" <expression>* !")"
+functiondef	= !"(" variable* !")" <block>
